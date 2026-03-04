@@ -10,7 +10,7 @@ export default function ImageGallery({ imageUrls, title }: { imageUrls: string[]
     <div className="space-y-4">
       <div className="overflow-hidden rounded-xl border shadow-sm">
         <div className="relative h-96 w-full bg-muted">
-          {imageUrls[selectedImage] && (
+          {imageUrls[selectedImage] ? (
             <Image
               src={imageUrls[selectedImage]}
               alt={title}
@@ -19,11 +19,15 @@ export default function ImageGallery({ imageUrls, title }: { imageUrls: string[]
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />
+          ) : (
+            <div className="w-full h-48 bg-muted flex items-center justify-center">
+              <span className="text-muted-foreground text-sm">No image available</span>
+            </div>
           )}
         </div>
       </div>
 
-      {imageUrls.length > 1 && (
+      {imageUrls.length > 1 && imageUrls[0] && (
         <div className="grid grid-cols-4 gap-2">
           {imageUrls.map((url, idx) => (
             <button

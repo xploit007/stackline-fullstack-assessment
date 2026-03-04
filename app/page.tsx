@@ -218,7 +218,7 @@ function HomeContent() {
                   <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
                     <CardHeader className="p-0">
                       <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-muted">
-                        {product.imageUrls[0] && (
+                        {product.imageUrls[0] ? (
                           <Image
                             src={product.imageUrls[0]}
                             alt={product.title}
@@ -226,6 +226,10 @@ function HomeContent() {
                             className="object-contain p-4"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
+                        ) : (
+                          <div className="w-full h-48 bg-muted flex items-center justify-center">
+                            <span className="text-muted-foreground text-sm">No image available</span>
+                          </div>
                         )}
                       </div>
                     </CardHeader>
