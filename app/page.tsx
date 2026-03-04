@@ -202,7 +202,24 @@ function HomeContent() {
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No products found</p>
+            <p className="text-muted-foreground text-lg font-medium">No products found</p>
+            <p className="text-muted-foreground text-sm mt-2">
+              Try adjusting your search or filters to find what you&apos;re looking for.
+            </p>
+            {(searchInput || selectedCategory || selectedSubCategory) && (
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => {
+                  setSearchInput("");
+                  setSearch("");
+                  setSelectedCategory(undefined);
+                  setSelectedSubCategory(undefined);
+                }}
+              >
+                Clear Filters
+              </Button>
+            )}
           </div>
         ) : (
           <>
@@ -210,7 +227,7 @@ function HomeContent() {
               Showing {products.length} of {total} products
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product) => (
+              {products.map((product, index) => (
                 <Link
                   key={product.stacklineSku}
                   href={`/product/${product.stacklineSku}`}
@@ -225,6 +242,7 @@ function HomeContent() {
                             fill
                             className="object-contain p-4"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            priority={index < 4}
                           />
                         ) : (
                           <div className="w-full h-48 bg-muted flex items-center justify-center">
