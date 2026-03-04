@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,18 +24,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/lib/products";
 
-export default function Home() {
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [subCategories, setSubCategories] = useState<string[]>([]);
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [searchInput, setSearchInput] = useState(searchParams.get("search") ?? "");
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    undefined
+    searchParams.get("category") ?? undefined
   );
   const [selectedSubCategory, setSelectedSubCategory] = useState<
     string | undefined
-  >(undefined);
+  >(searchParams.get("subCategory") ?? undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState<number>(0);
@@ -43,6 +46,15 @@ export default function Home() {
     const timer = setTimeout(() => setSearch(searchInput), 300);
     return () => clearTimeout(timer);
   }, [searchInput]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (selectedCategory) params.set("category", selectedCategory);
+    if (selectedSubCategory) params.set("subCategory", selectedSubCategory);
+    const queryString = params.toString();
+    router.replace(queryString ? `/?${queryString}` : "/", { scroll: false });
+  }, [search, selectedCategory, selectedSubCategory, router]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -241,5 +253,13 @@ export default function Home() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
