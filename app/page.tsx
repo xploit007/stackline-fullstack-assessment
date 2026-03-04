@@ -36,39 +36,67 @@ export default function Home() {
     string | undefined
   >(undefined);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data.categories));
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        if (!res.ok) throw new Error("Failed to load categories");
+        const data = await res.json();
+        setCategories(data.categories);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load categories");
+      }
+    };
+    fetchCategories();
   }, []);
 
   useEffect(() => {
     if (selectedCategory) {
       setSelectedSubCategory(undefined);
-      fetch(`/api/subcategories?category=${encodeURIComponent(selectedCategory)}`)
-        .then((res) => res.json())
-        .then((data) => setSubCategories(data.subCategories));
+      const fetchSubCategories = async () => {
+        try {
+          const res = await fetch(`/api/subcategories?category=${encodeURIComponent(selectedCategory)}`);
+          if (!res.ok) throw new Error("Failed to load subcategories");
+          const data = await res.json();
+          setSubCategories(data.subCategories);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Failed to load subcategories");
+        }
+      };
+      fetchSubCategories();
     } else {
       setSubCategories([]);
       setSelectedSubCategory(undefined);
     }
   }, [selectedCategory]);
 
-  useEffect(() => {
+  const fetchProducts = async () => {
     setLoading(true);
+    setError(null);
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     if (selectedCategory) params.append("category", selectedCategory);
     if (selectedSubCategory) params.append("subCategory", selectedSubCategory);
     params.append("limit", "20");
 
-    fetch(`/api/products?${params}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.products);
-        setLoading(false);
-      });
+    try {
+      const res = await fetch(`/api/products?${params}`);
+      if (!res.ok) throw new Error("Failed to load products");
+      const data = await res.json();
+      setProducts(data.products);
+      setTotal(data.total);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
   }, [search, selectedCategory, selectedSubCategory]);
 
   return (
@@ -141,7 +169,14 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {loading ? (
+        {error ? (
+          <div className="text-center py-12">
+            <p className="text-destructive mb-4">{error}</p>
+            <Button variant="outline" onClick={() => fetchProducts()}>
+              Try Again
+            </Button>
+          </div>
+        ) : loading ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">Loading products...</p>
           </div>
@@ -152,7 +187,7 @@ export default function Home() {
         ) : (
           <>
             <p className="text-sm text-muted-foreground mb-4">
-              Showing {products.length} products
+              Showing {products.length} of {total} products
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product) => (
