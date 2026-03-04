@@ -188,6 +188,9 @@ export default function Home() {
                           {product.subCategoryName}
                         </Badge>
                       </CardDescription>
+                      <p className="text-lg font-bold mt-2">
+                        {product.retailPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                      </p>
                     </CardContent>
                     <CardFooter>
                       <Button variant="outline" className="w-full">

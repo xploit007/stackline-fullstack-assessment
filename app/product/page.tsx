@@ -104,6 +104,9 @@ export default function ProductPage() {
                 <Badge variant="outline">{product.subCategoryName}</Badge>
               </div>
               <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
+              <p className="text-2xl font-bold mb-2">
+                {product.retailPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+              </p>
               <p className="text-sm text-muted-foreground">SKU: {product.retailerSku}</p>
             </div>
 
