@@ -22,14 +22,7 @@ import {
 import { Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-
-interface Product {
-  stacklineSku: string;
-  title: string;
-  categoryName: string;
-  subCategoryName: string;
-  imageUrls: string[];
-}
+import { Product } from "@/lib/products";
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
