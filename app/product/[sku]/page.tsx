@@ -1,31 +1,18 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Product } from '@/lib/products';
+import { productService } from '@/lib/products';
+import ImageGallery from './image-gallery';
 
-export default function ProductPage() {
-  const searchParams = useSearchParams();
-  const productParam = searchParams.get('product');
-  const [product, setProduct] = useState<Product | null>(null);
-  const [selectedImage, setSelectedImage] = useState(0);
-
-  useEffect(() => {
-    if (productParam) {
-      try {
-        const parsedProduct = JSON.parse(productParam);
-        setProduct(parsedProduct);
-      } catch (error) {
-        console.error('Failed to parse product data:', error);
-      }
-    }
-  }, [productParam]);
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ sku: string }>;
+}) {
+  const { sku } = await params;
+  const product = productService.getById(sku);
 
   if (!product) {
     return (
@@ -56,46 +43,7 @@ export default function ProductPage() {
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <Card className="overflow-hidden">
-              <CardContent className="p-0">
-                <div className="relative h-96 w-full bg-muted">
-                  {product.imageUrls[selectedImage] && (
-                    <Image
-                      src={product.imageUrls[selectedImage]}
-                      alt={product.title}
-                      fill
-                      className="object-contain p-8"
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      priority
-                    />
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {product.imageUrls.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {product.imageUrls.map((url, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedImage(idx)}
-                    className={`relative h-20 border-2 rounded-lg overflow-hidden ${
-                      selectedImage === idx ? 'border-primary' : 'border-muted'
-                    }`}
-                  >
-                    <Image
-                      src={url}
-                      alt={`${product.title} - Image ${idx + 1}`}
-                      fill
-                      className="object-contain p-2"
-                      sizes="100px"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <ImageGallery imageUrls={product.imageUrls} title={product.title} />
 
           <div className="space-y-6">
             <div>
