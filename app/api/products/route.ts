@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     category: searchParams.get('category') || undefined,
     subCategory: searchParams.get('subCategory') || undefined,
     search: searchParams.get('search') || undefined,
-    limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20,
+    limit: Math.max(1, Math.min(100, searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20)),
     offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : 0,
   };
 

@@ -232,7 +232,7 @@ function HomeContent() {
                   key={product.stacklineSku}
                   href={`/product/${product.stacklineSku}`}
                 >
-                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+                  <Card className="h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer">
                     <CardHeader className="p-0">
                       <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-muted">
                         {product.imageUrls[0] ? (
