@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -234,11 +233,6 @@ export default function Home() {
                         {product.retailPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                       </p>
                     </CardContent>
-                    <CardFooter>
-                      <Button variant="outline" className="w-full">
-                        View Details
-                      </Button>
-                    </CardFooter>
                   </Card>
                 </Link>
               ))}

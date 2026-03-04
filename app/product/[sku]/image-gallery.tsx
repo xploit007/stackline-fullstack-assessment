@@ -27,8 +27,11 @@ export default function ImageGallery({ imageUrls, title }: { imageUrls: string[]
         <div className="grid grid-cols-4 gap-2">
           {imageUrls.map((url, idx) => (
             <button
+              type="button"
               key={idx}
               onClick={() => setSelectedImage(idx)}
+              aria-label={`View image ${idx + 1} of ${imageUrls.length}`}
+              aria-current={selectedImage === idx ? "true" : undefined}
               className={`relative h-20 border-2 rounded-lg overflow-hidden ${
                 selectedImage === idx ? 'border-primary' : 'border-muted'
               }`}
